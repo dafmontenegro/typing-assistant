@@ -63,8 +63,8 @@ class TypingAssistant:
                             next_symbols[symbol] = tree[symbol][""]
             total = sum(next_symbols.values())
             for symbol in next_symbols:
-                next_symbols[symbol] = round(next_symbols[symbol] / total, 2)
-        return sorted(next_symbols.items(), key=lambda symbol: symbol[1], reverse=True)
+                next_symbols[symbol] = round(next_symbols[symbol] / total, 4)
+        return dict(sorted(next_symbols.items(), key=lambda symbol: symbol[1], reverse=True))
     
     def save(self):
         with open(".model.json", "w", encoding="utf-8") as model_json:
@@ -84,5 +84,3 @@ class TypingAssistant:
             if isinstance(tree[symbol], dict):
                 trees.extend(TypingAssistant.__all_trees(tree[symbol], root))
         return trees
-
-typing_assistant = TypingAssistant()
