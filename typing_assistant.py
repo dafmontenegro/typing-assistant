@@ -9,36 +9,31 @@ class TypingAssistant:
                 self.data_model = json.load(model_json)
         except FileNotFoundError:
             self.data_model = {"Typing Assistant": {}}
-            self.update_json()
-
-    def update_json(self):
-        with open("model.json", "w", encoding="utf-8") as model_json:
-            json.dump(self.data_model, model_json, indent=4)
+    
+    def __str__(self):
+        return json.dumps(self.data_model, ensure_ascii=False, indent=4)
 
     def add_line(self, line, assistant="Typing Assistant"):
         if assistant != "Typing Assistant":
+            if assistant not in self.data_model:
+                self.data_model[assistant] = {}
             self.add_line(line, "Typing Assistant")
-        comes_from = ""
+        last_path = self.data_model[assistant]
         line = line.split()
         for symbol in line:
-            if assistant in self.data_model:
-                if comes_from in self.data_model[assistant]:
-                    if symbol in self.data_model[assistant][comes_from]:
-                        self.data_model[assistant][comes_from][symbol] += 1
-                    else:
-                        self.data_model[assistant][comes_from][symbol] = 1
-                else:
-                    self.data_model[assistant][comes_from] = {symbol: 1}
+            if symbol in last_path:
+                last_path[symbol][""] += 1
             else:
-                self.data_model[assistant] = {comes_from: {symbol: 1}}
-            comes_from = symbol
+                last_path[symbol] = {"": 1}
+            last_path = last_path[symbol]
     
     def add_text(self, text_name, assistant="Typing Assistant"):
         with open(text_name, "r", encoding="utf-8") as file:
             lines = file.readlines()
         for line in lines:
-            self.add_line(line, assistant)
-        self.update_json()
+            sublines = line.split(".")
+            for subline in sublines:
+                self.add_line(subline, assistant)
 
     def add_folder(self, folder_name):
         directory = os.listdir(f"{os.getcwd()}/{folder_name}")
@@ -49,5 +44,47 @@ class TypingAssistant:
             elif "." not in file_name:
                 self.add_folder(file_path)
 
+    def next(self, line, assistant="Typing Assistant"):
+        next_symbols = {}
+        if assistant in self.data_model:
+            line = line.split()
+            trees = TypingAssistant.__all_trees(self.data_model[assistant], line[0])
+            for tree in trees:
+                for symbol in line:
+                    if symbol in tree:
+                        tree = tree[symbol]
+                    else:
+                        tree = {}
+                for symbol in tree:
+                    if symbol:
+                        if symbol in next_symbols:
+                            next_symbols[symbol] += tree[symbol][""]
+                        else:
+                            next_symbols[symbol] = tree[symbol][""]
+            total = 0
+            for symbol_value in next_symbols.values():
+                total += symbol_value
+            for symbol in next_symbols:
+                next_symbols[symbol] = round(next_symbols[symbol] / total, 2)
+        return sorted(next_symbols.items(), key=lambda symbol: symbol[1], reverse=True)
+    
+    def save(self):
+        with open(".model.json", "w", encoding="utf-8") as model_json:
+            json.dump(self.data_model, model_json, ensure_ascii=False)
+
+    def empty(self):
+        self.data_model = {}
+        self.save()
+
+    @staticmethod
+    def __all_trees(tree, root):
+        if root in tree:
+            trees = [tree]
+        else:
+            trees = []
+        for symbol in tree:
+            if isinstance(tree[symbol], dict):
+                trees.extend(TypingAssistant.__all_trees(tree[symbol], root))
+        return trees
+
 typing_assistant = TypingAssistant()
-typing_assistant.add_folder("data")
