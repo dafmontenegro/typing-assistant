@@ -61,9 +61,7 @@ class TypingAssistant:
                             next_symbols[symbol] += tree[symbol][""]
                         else:
                             next_symbols[symbol] = tree[symbol][""]
-            total = 0
-            for symbol_value in next_symbols.values():
-                total += symbol_value
+            total = sum(next_symbols.values())
             for symbol in next_symbols:
                 next_symbols[symbol] = round(next_symbols[symbol] / total, 2)
         return sorted(next_symbols.items(), key=lambda symbol: symbol[1], reverse=True)
