@@ -1,0 +1,22 @@
+Aquiles dio alcance a la Tortuga y tomó asiento en su caparazón.
+—Ha llegado el final de nuestra carrera —dijo la Tortuga—, y ello a pesar de que se componía de una serie infinita de distancias. Tenía entendido que algún sabihondo había probado que eso era imposible.
+—Es posible —dijo Aquiles—. ¡Es un hecho! Solvitur ambulando.
+—¿Quiere que le cuente una carrera que todo el mundo cree poder terminar en dos o tres pasos y que, en realidad, consta de un número infinito de distancias? ¡Tome nota!
+El guerrero sacó de su casco (pocos disponían de bolsillos en aquellos tiempos) una libreta y un lápiz. La Tortuga le dictó: “A. Dos cosas iguales a una tercera son iguales entre sí; B. Los dos lados de este triángulo son iguales a un tercero; Z. Los dos lados de este triángulo son iguales entre sí”.
+—¿Está de acuerdo en que todo el que acepte A y B como verdaderas, debe aceptar Z como verdadera? —indagó la Tortuga.
+—¡Sin duda!
+—O sea que hay una proposición hipotética que dice: “si A y B son verdaderas, Z debe ser verdadera”. Alguien podría aceptar las dos premisas, pero no la conclusión…
+—Ciertamente —dijo Aquiles—, pero más valdría que se dedicara al fútbol.
+—Llamemos C a esa proposición hipotética. Agréguela, por favor, antes de Z.
+—En lugar de Z, deberíamos llamarla D —propuso Aquiles—: viene inmediatamente después de las otras tres. Si acepta usted A y B y C, debe usted aceptar Z.
+—¿Y por qué debo aceptarla? —preguntó la Tortuga.
+—Se sigue lógicamente de ellas: si A y B y C son verdaderas, Z debe ser verdadera.
+—O sea que hay otra proposición hipotética que dice: “si A y B y C son verdaderas, Z debe ser verdadera”.
+—Parece…
+—Llamémosla D. Anótela, por favor, antes de Z.
+—¡Por fin hemos llegado a la meta de esta carrera ideal: ahora que acepta usted A y B y C y D, por supuesto que acepta Z.
+—¿La acepto? —dijo la Tortuga con ingenuidad—. Acepto A y B y C y D; sin embargo, supongamos que me niego a aceptar Z.
+—En ese caso, la lógica la cogería a usted por el cuello y le diría que no tiene otro recurso: si ha aceptado A y B y C y D, debe usted aceptar Z. No hay alternativa.
+—Todo lo que la lógica tenga a bien decirme, merece ser anotado —dijo la Tortuga—. Así que apúntelo en su libreta, por favor. Lo llamaremos E…
+Meses después, Aquiles estaba todavía sentado en el caparazón de la muy paciente Tortuga, escribiendo en su libreta de notas, que ya parecía estar llena.
+FIN

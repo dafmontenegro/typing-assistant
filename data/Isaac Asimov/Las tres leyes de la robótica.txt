@@ -1,0 +1,5 @@
+Ningún robot causará daño a un ser humano o permitirá, con su inacción, que un ser humano resulte dañado.
+Todo robot obedecerá las órdenes recibidas de los seres humanos, excepto cuando esas órdenes puedan entrar en contradicción con la primera ley.
+Todo robot debe proteger su propia existencia, siempre y cuando esta protección no entre en contradicción con la primera o la segunda ley.
+FIN
+“The Three Laws of Robotics”
