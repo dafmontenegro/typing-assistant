@@ -1,86 +1,88 @@
 import os
 import json
+import shutil
 
 class TypingAssistant:
-    
-    def __init__(self):
-        try:
-            with open(".model.json", "r", encoding="utf-8") as model_json:
-                self.data_model = json.load(model_json)
-        except FileNotFoundError:
-            self.data_model = {"Typing Assistant": {}}
-    
-    def __str__(self):
-        return json.dumps(self.data_model, ensure_ascii=False, indent=4)
 
-    def add_line(self, line, assistant="Typing Assistant"):
-        if assistant != "Typing Assistant":
-            if assistant not in self.data_model:
-                self.data_model[assistant] = {}
-            self.add_line(line, "Typing Assistant")
-        last_path = self.data_model[assistant]
+    def __init__(self):
+        self.model_path = os.path.join(os.getcwd(), "model")
+
+    def next(self, line, assistant="Typing Assistant"):
+        next_symbols = {}
         line = line.split()
-        for symbol in line:
-            if symbol in last_path:
-                last_path[symbol][""] += 1
+        for i in range(len(line)-1):
+            subline = line[i:]
+            next_symbols[" ".join(subline)] = self.__last_leaf(subline, assistant)
+        return next_symbols
+    
+    def add_line(self, line, assistant="Typing Assistant"):
+        if len(line) >= 2:
+            if assistant != "Typing Assistant":
+                self.add_line(line, "Typing Assistant")
+            root = line[0]
+            model_path = os.path.join(self.model_path, assistant, f"{root}.json")
+            if self.__path_exits(assistant, f"{root}.json"):
+                with open(model_path, "r", encoding="utf-8") as model_json:
+                    tree = json.load(model_json)
             else:
-                last_path[symbol] = {"": 1}
-            last_path = last_path[symbol]
+                if not self.__path_exits(assistant):
+                    os.makedirs(os.path.join(self.model_path, assistant))
+                tree = {}
+            last_tree = tree
+            subline = line[1:]
+            for symbol in subline:
+                if symbol in last_tree:
+                    last_tree[symbol][""] += 1
+                else:
+                    last_tree[symbol] = {"": 1}
+                last_tree = last_tree[symbol]
+            with open(model_path, "w", encoding="utf-8") as model_json:
+                json.dump(tree, model_json, ensure_ascii=False)
+            return self.add_line(line[1:], assistant)
     
     def add_text(self, text_name, assistant="Typing Assistant"):
+        print(f"    {text_name}")
         with open(text_name, "r", encoding="utf-8") as file:
             lines = file.readlines()
         for line in lines:
             sublines = line.split(".")
             for subline in sublines:
-                self.add_line(subline, assistant)
-
+                self.add_line(subline.split(), assistant)
+    
     def add_folder(self, folder_name):
-        directory = os.listdir(f"{os.getcwd()}/{folder_name}")
+        directory = sorted(os.listdir(f"{os.getcwd()}/{folder_name}"))
+        print(folder_name)
         for file_name in directory:
             file_path = f"{folder_name}/{file_name}"
             if file_name.endswith(".txt"):
-                self.add_text(file_path, folder_name.split("/")[-1])
+                self.add_text(file_path, "Typing Assistant") # HERE
             elif "." not in file_name:
                 self.add_folder(file_path)
 
-    def next(self, line, assistant="Typing Assistant"):
-        next_symbols = {}
-        if assistant in self.data_model:
-            line = line.split()
-            trees = TypingAssistant.__all_trees(self.data_model[assistant], line[0])
-            for tree in trees:
-                for symbol in line:
-                    if symbol in tree:
-                        tree = tree[symbol]
-                    else:
-                        tree = {}
-                for symbol in tree:
-                    if symbol:
-                        if symbol in next_symbols:
-                            next_symbols[symbol] += tree[symbol][""]
-                        else:
-                            next_symbols[symbol] = tree[symbol][""]
-            total = sum(next_symbols.values())
-            for symbol in next_symbols:
-                next_symbols[symbol] = round(next_symbols[symbol] / total, 4)
-        return dict(sorted(next_symbols.items(), key=lambda symbol: symbol[1], reverse=True))
-    
-    def save(self):
-        with open(".model.json", "w", encoding="utf-8") as model_json:
-            json.dump(self.data_model, model_json, ensure_ascii=False)
-
     def empty(self):
-        self.data_model = {}
-        self.save()
+        if self.__path_exits():
+            shutil.rmtree(self.model_path)
+    
+    def __path_exits(self, *paths):
+        path = os.path.join(self.model_path, *paths)
+        return os.path.exists(path)
+    
+    def __last_leaf(self, line, assistant="Typing Assistant"):
+        root = line[0]
+        if self.__path_exits(assistant, f"{root}.json"):
+            model_path = os.path.join(self.model_path, assistant, f"{root}.json")
+            with open(model_path, "r", encoding="utf-8") as model_json:
+                tree = json.load(model_json)
+            for symbol in line[1:]:
+                if symbol in tree:
+                    tree = tree[symbol]
+                else:
+                    return {}
+            del tree[""]
+            for symbol in tree:
+                tree[symbol] = tree[symbol][""]
+            return tree
+        return {}
 
-    @staticmethod
-    def __all_trees(tree, root):
-        if root in tree:
-            trees = [tree]
-        else:
-            trees = []
-        for symbol in tree:
-            if isinstance(tree[symbol], dict):
-                trees.extend(TypingAssistant.__all_trees(tree[symbol], root))
-        return trees
+typing_assistant = TypingAssistant()
+typing_assistant.add_folder("data")
