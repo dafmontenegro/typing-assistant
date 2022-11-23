@@ -50,13 +50,12 @@ class TypingAssistant:
                 self.add_line(subline.split(), assistant)
     
     def add_folder(self, folder_name):
-        directory = sorted(os.listdir(f"{os.getcwd()}/{folder_name}"))
-        print(folder_name)
+        directory = sorted(os.listdir(os.path.join(os.getcwd(), folder_name)))
         for file_name in directory:
-            file_path = f"{folder_name}/{file_name}"
-            if file_name.endswith(".txt"):
-                self.add_text(file_path, "Typing Assistant") # HERE
-            elif "." not in file_name:
+            file_path = os.path.join(folder_name, file_name)
+            if os.path.isfile(file_path):
+                self.add_text(file_path, "Typing Assistant")
+            elif os.path.isdir(file_path):
                 self.add_folder(file_path)
 
     def empty(self):
@@ -83,6 +82,3 @@ class TypingAssistant:
                 tree[symbol] = tree[symbol][""]
             return tree
         return {}
-
-typing_assistant = TypingAssistant()
-typing_assistant.add_folder("data")
