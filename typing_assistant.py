@@ -1,6 +1,7 @@
 import os
 import json
 import shutil
+import hashlib
 
 class TypingAssistant:
 
@@ -11,15 +12,22 @@ class TypingAssistant:
         next_symbols = {}
         line = line.split()
         for i in range(len(line)-1):
-            subline = line[i:]
-            next_symbols[" ".join(subline)] = self.__last_leaf(subline, assistant)
-        return next_symbols
+            next_symbol = self.__last_leaf(line[i:], assistant)
+            for symbol in next_symbol:
+                if symbol in next_symbols:
+                    next_symbols[symbol] += next_symbol[symbol]
+                else:
+                    next_symbols[symbol] = next_symbol[symbol]
+            total = sum(next_symbols.values())
+            for symbol in next_symbols:
+                next_symbols[symbol] = round(next_symbols[symbol] / total, 4)
+        return dict(sorted(next_symbols.items(), key=lambda symbol: symbol[1], reverse=True))
     
     def add_line(self, line, assistant="Typing Assistant"):
         if len(line) >= 2:
             if assistant != "Typing Assistant":
                 self.add_line(line, "Typing Assistant")
-            root = line[0]
+            root = hashlib.md5(line[0].encode()).hexdigest()
             model_path = os.path.join(self.model_path, assistant, f"{root}.json")
             if self.__path_exits(assistant, f"{root}.json"):
                 with open(model_path, "r", encoding="utf-8") as model_json:
@@ -41,7 +49,6 @@ class TypingAssistant:
             return self.add_line(line[1:], assistant)
     
     def add_text(self, text_name, assistant="Typing Assistant"):
-        print(f"    {text_name}")
         with open(text_name, "r", encoding="utf-8") as file:
             lines = file.readlines()
         for line in lines:
@@ -54,7 +61,7 @@ class TypingAssistant:
         for file_name in directory:
             file_path = os.path.join(folder_name, file_name)
             if os.path.isfile(file_path):
-                self.add_text(file_path, "Typing Assistant")
+                self.add_text(file_path, folder_name.split("/")[-1])
             elif os.path.isdir(file_path):
                 self.add_folder(file_path)
 
@@ -67,7 +74,7 @@ class TypingAssistant:
         return os.path.exists(path)
     
     def __last_leaf(self, line, assistant="Typing Assistant"):
-        root = line[0]
+        root = hashlib.md5(line[0].encode()).hexdigest()
         if self.__path_exits(assistant, f"{root}.json"):
             model_path = os.path.join(self.model_path, assistant, f"{root}.json")
             with open(model_path, "r", encoding="utf-8") as model_json:
